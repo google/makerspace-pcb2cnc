@@ -37,7 +37,13 @@ width = 2.0
 
 [drilling]
 depth = 1.7
-milldrill.above = 2.0
+
+[drilling.milldrill]
+above = 2.0
+minimum = 2.0 
+depth = 1.6
+tool = 112
+
 
 [routing]
 depth = 1.7
