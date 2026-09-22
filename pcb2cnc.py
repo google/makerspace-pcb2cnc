@@ -1763,6 +1763,7 @@ def main():
   parser_run.add_argument("--output-front", type=str, help="Output front gcode file")
   parser_run.add_argument("--output-back", type=str, help="Output back gcode file")
   parser_run.add_argument("--copper-side", type=str, choices=["front", "back", "both"], default="back", help="Copper side to process")
+  parser_run.add_argument("--keep-workdir", action="store_true", help="Keep the generated working directory after creating gcode")
 
   args = parser.parse_args()
 
@@ -1790,7 +1791,12 @@ def main():
     with contextlib.ExitStack() as stack:
       if args.command == "run":
         inputs = GerberFileSet.load(args.directory, copper_side)
-        tempdir = stack.enter_context(tempfile.TemporaryDirectory())
+        tempdir = stack.enter_context(
+            tempfile.TemporaryDirectory(
+                prefix="pcb2cnc.",
+                delete=not args.keep_workdir,
+            )
+        )
         working_dir = pathlib.Path(tempdir)
       else:
         inputs = None
@@ -1816,6 +1822,9 @@ def main():
       )
 
       processor.postprocess(output_front=out_front, output_back=out_back)
+
+      if args.command == "run" and args.keep_workdir:
+        print(f"Generated files available at: {working_dir}")
 
 if __name__ == "__main__":
   main()
