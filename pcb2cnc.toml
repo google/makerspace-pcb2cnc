@@ -33,45 +33,66 @@ pathfinding_steps_limit = 3
 
 [isolation]
 depth = 0.1
-width = 2.0
+# Pick the single V-bit you intend to use (501 for 60-deg or 502 for 40-deg)
+tools = [501]
+# Voronoi produces clean single-boundary isolation cuts without eating the GND pour
+voronoi = true
+voronoi_preserve_thermals = true
 
 [drilling]
-depth = 1.7
-milldrill.above = 2.0
+# 2.1mm ensures the conical drill tip (0.3mm) punches fully through a 1.6mm board
+# 1.95mm ensures clean through-hole, minimal spoilboard penetration
+depth = 1.95
+
+[drilling.milldrill]
+minimum = 2.0 
+depth = 1.8
+tool = 112
 
 [routing]
-depth = 1.7
+# 1.8mm ensures complete perimeter separation into the spoilboard
+depth = 1.8
+tool = 112
 
 [mills.defaults]
 rpm = 10000
-depth_per_pass = 6
+# Safe default step-down for milling
+depth_per_pass = 0.6
 
 [mills.defaults.isolation]
 feed = 400
-plunge = 400
+# Slower plunge protects the delicate V-bit tip
+plunge = 150
 
 [mills.defaults.routing]
 feed = 200
 plunge = 200
+# 3 passes (0.6mm each) to route a 1.8mm outline smoothly
+depth_per_pass = 0.6
 
 [mills.defaults.milldrill]
 feed = 200
 plunge = 200
+depth_per_pass = 0.6
 
-[mills]
-112 = 1.590
+# 1/16" (1.59mm) flat endmill for outline routing and milldrilling ONLY
+[mills.112]
+diameter = 1.590
+isolation = false
 
+# 60-degree V-bit engraver
 [mills.501]
-diameter = 3
+diameter = 3.0
 angle = 60
 ball_diameter = 0.250
 
+# 40-degree V-bit engraver
 [mills.502]
 diameter = 3.175
 angle = 40
 ball_diameter = 0.1275
 feed = 300
-plunge = 300
+plunge = 150
 
 [drills.defaults]
 rpm = 10000
@@ -83,4 +104,3 @@ start = 0.3
 end = 1.2
 step = 0.1
 first = 903
-
